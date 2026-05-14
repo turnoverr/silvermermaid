@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Silver Mermaid Fish & Chips – Cranbourne</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ocean:  #4ec8e8;
+      --deep:   #1a7fa0;
+      --active: #197d9e;
+      --foam:   #e8f8fd;
+      --sand:   #fffdf8;
+      --ink:    #1c2b33;
+      --muted:  #5a7a88;
+      --wave-1: #d0f0fa;
+      --wave-2: #b8e8f5;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Nunito', sans-serif; background: var(--sand); color: var(--ink); overflow-x: hidden; }
+
+    .wave-divider { display: block; width: 100%; line-height: 0; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--wave-1);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 12px 32px; }
+    .nav-brand { font-family: 'Pacifico', cursive; font-size: 1.35rem; color: var(--deep); display: flex; align-items: center; gap: 8px; }
+    .nav-links { display: flex; gap: 0; list-style: none; }
+    .nav-links li { position: relative; }
+    .nav-links a {
+      display: block; padding: 6px 18px;
+      text-decoration: none; color: var(--muted); font-weight: 700; font-size: 0.88rem;
+      letter-spacing: 0.04em; text-transform: uppercase; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--active); }
+    /* scroll-spy underline */
+    .nav-links li::after {
+      content: ''; display: block; position: absolute;
+      bottom: -2px; left: 18px; right: 18px;
+      height: 3px; border-radius: 2px 2px 0 0;
+      background: var(--active);
+      transform: scaleX(0); transform-origin: center;
+      transition: transform 0.25s ease;
+    }
+    .nav-links li.nav-active::after { transform: scaleX(1); }
+    .nav-links li.nav-active a { color: var(--active); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      background: linear-gradient(160deg, #cef3ff 0%, #a8e8f8 40%, #7dd4ef 100%);
+      padding: 80px 32px 120px; text-align: center; overflow: hidden;
+    }
+    .hero::before, .hero::after {
+      content: ''; position: absolute; border-radius: 50%; opacity: 0.18; background: white;
+    }
+    .hero::before { width: 380px; height: 380px; top: -80px; left: -80px; }
+    .hero::after  { width: 260px; height: 260px; bottom: 40px; right: -60px; }
+    .hero-icon { margin-bottom: 8px; animation: float 3.5s ease-in-out infinite; }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+    .hero h1 { font-family: 'Pacifico', cursive; font-size: clamp(2.6rem,6vw,4.2rem); color: var(--deep); text-shadow: 0 2px 0 rgba(255,255,255,.6); line-height: 1.1; }
+    .hero h1 span { color: #1c2b33; }
+    .hero-sub { font-size: 1.15rem; color: var(--deep); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-top: 6px; margin-bottom: 28px; }
+    .hero-badges { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 36px; }
+    .badge { background: white; color: var(--deep); border: 2px solid var(--ocean); border-radius: 999px; padding: 6px 16px; font-size: .85rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; }
+    .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; border-radius: 999px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1rem; text-decoration: none; border: none; transition: transform .18s, box-shadow .18s; cursor: pointer; }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.15); }
+    .btn-primary { background: var(--deep); color: white; }
+    .btn-secondary { background: white; color: var(--deep); border: 2px solid var(--deep); }
+
+    /* ── CALL MODAL ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; z-index: 999; background: rgba(15,30,38,.65); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: white; border-radius: 20px; padding: 40px 36px; text-align: center; max-width: 360px; width: 90%; box-shadow: 0 24px 60px rgba(0,0,0,.25); animation: popIn .22s ease; }
+    @keyframes popIn { from { transform: scale(.88); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-title { font-family: 'Pacifico', cursive; font-size: 1.5rem; color: var(--deep); margin: 16px 0 6px; }
+    .modal-sub { font-size: .9rem; color: var(--muted); margin-bottom: 20px; }
+    .modal-number { font-family: 'Pacifico', cursive; font-size: 2rem; color: var(--active); margin-bottom: 28px; letter-spacing: .04em; }
+    .modal-actions { display: flex; flex-direction: column; gap: 12px; }
+    .btn-call { display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--active); color: white; border: none; border-radius: 999px; padding: 14px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.05rem; cursor: pointer; text-decoration: none; transition: background .2s, transform .15s; }
+    .btn-call:hover { background: var(--deep); transform: scale(1.02); }
+    .btn-dismiss { background: none; border: 2px solid var(--wave-2); color: var(--muted); border-radius: 999px; padding: 12px; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: border-color .2s, color .2s; }
+    .btn-dismiss:hover { border-color: var(--ocean); color: var(--deep); }
+
+    /* ── SHARED SECTION ── */
+    section { padding: 72px 24px; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-title { font-family: 'Pacifico', cursive; font-size: 2rem; color: var(--deep); margin-bottom: 40px; text-align: center; }
+    .section-title::after { content: ''; display: block; width: 64px; height: 3px; background: var(--ocean); border-radius: 2px; margin: 10px auto 0; }
+
+    /* ── INFO STRIP ── */
+    .info-strip { background: var(--deep); color: white; padding: 40px 24px; }
+    .info-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 32px; text-align: center; }
+    .info-block h3 { font-family: 'Pacifico', cursive; font-size: 1.1rem; color: white; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .info-block p { font-size: .95rem; line-height: 1.7; opacity: 1; color: rgba(255,255,255,0.88); }
+    .info-block a { color: #a8eeff; text-decoration: none; font-weight: 800; }
+    .info-block a:hover { text-decoration: underline; }
+
+    /* ── HOURS ── */
+    .hours-section { background: var(--foam); }
+    .hours-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 16px; }
+    .hours-card { background: white; border-radius: var(--radius); border: 2px solid var(--wave-1); padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .hours-card.today { border-color: var(--active); background: #f0faff; box-shadow: 0 0 0 1px var(--active); }
+    .hours-card .day { font-weight: 800; color: var(--ink); }
+    .hours-card.today .day::after { content: ' ★'; color: var(--active); font-size: .75rem; }
+    .hours-card .time { color: var(--deep); font-weight: 700; font-size: .95rem; }
+    .hours-card.closed .time { color: #c0392b; }
+    .hours-note { text-align: center; margin-top: 20px; font-size: .85rem; color: var(--muted); font-style: italic; }
+
+    /* ── MENU ── */
+    .menu-section { background: var(--sand); }
+    .menu-tabs { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 36px; }
+    .tab-btn { background: white; border: 2px solid var(--wave-2); border-radius: 999px; padding: 8px 22px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: .9rem; color: var(--muted); cursor: pointer; transition: all .2s; }
+    .tab-btn.active, .tab-btn:hover { background: var(--ocean); border-color: var(--ocean); color: white; }
+    .menu-panel { display: none; }
+    .menu-panel.active { display: block; }
+    .menu-category { margin-bottom: 36px; }
+    .menu-category h3 { font-family: 'Pacifico', cursive; font-size: 1.3rem; color: var(--deep); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px dashed var(--wave-2); }
+    .menu-items { display: grid; grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); gap: 10px; }
+    .menu-item { background: white; border-radius: 10px; border: 1.5px solid var(--wave-1); padding: 12px 16px; display: flex; justify-content: space-between; align-items: flex-start; }
+    .menu-item-left { flex: 1; }
+    .menu-item-name { font-weight: 700; color: var(--ink); font-size: .95rem; }
+    .menu-item-desc { font-size: .8rem; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+    .menu-item-price { font-weight: 800; color: var(--deep); font-size: 1rem; white-space: nowrap; margin-left: 12px; padding-top: 2px; }
+    .menu-note { font-size: .82rem; color: var(--muted); font-style: italic; margin-top: 10px; background: var(--foam); border-radius: 8px; padding: 10px 14px; }
+    .packs-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 16px; }
+    .pack-card { background: white; border-radius: var(--radius); border: 2px solid var(--wave-2); padding: 20px; text-align: center; transition: transform .18s, box-shadow .18s; }
+    .pack-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(78,200,232,.2); }
+    .pack-card h4 { font-family: 'Pacifico', cursive; font-size: 1.1rem; color: var(--deep); margin-bottom: 4px; }
+    .pack-price { font-size: 1.5rem; font-weight: 800; color: var(--ocean); margin-bottom: 10px; }
+    .pack-desc { font-size: .88rem; color: var(--muted); line-height: 1.5; }
+    .pack-note { font-size: .78rem; color: var(--ocean); margin-top: 8px; font-style: italic; }
+
+    /* ── ABOUT ── */
+    .about-section { background: var(--foam); }
+    .about-inner { max-width: 780px; margin: 0 auto; text-align: center; }
+    .about-inner p { font-size: 1.05rem; line-height: 1.8; color: var(--ink); margin-bottom: 16px; }
+    .about-pills { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 28px; }
+    .about-pill { background: white; border: 2px solid var(--ocean); color: var(--deep); font-weight: 800; font-size: .9rem; border-radius: 999px; padding: 8px 18px; display: inline-flex; align-items: center; gap: 6px; }
+
+    /* ── FIND US ── */
+    .find-section { background: var(--deep); color: white; text-align: center; }
+    .find-section .section-title { color: white; }
+    .find-section .section-title::after { background: var(--ocean); }
+    .map-wrap { border-radius: var(--radius); overflow: hidden; max-width: 700px; margin: 0 auto 28px; border: 3px solid var(--ocean); }
+    .map-wrap iframe { display: block; width: 100%; height: 380px; border: none; }
+    .find-detail { font-size: 1.05rem; opacity: .9; line-height: 1.8; }
+    .find-detail strong { color: var(--ocean); }
+    .find-phone { font-family: 'Pacifico', cursive; font-size: 2.2rem; color: var(--ocean); margin: 16px 0 4px; }
+
+    /* ── FOOTER ── */
+    footer { background: #0f1e26; color: rgba(255,255,255,.45); text-align: center; padding: 24px; font-size: .82rem; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .nav-inner { padding: 10px 14px; }
+      .nav-links a { padding: 6px 10px; font-size: .76rem; }
+      section { padding: 52px 16px; }
+    }
+
+    /* fade-in */
+    .fade-in { opacity: 0; transform: translateY(24px); animation: fadeUp .6s ease forwards; }
+    @keyframes fadeUp { to { opacity: 1; transform: none; } }
+    .delay-1 { animation-delay: .1s; }
+    .delay-2 { animation-delay: .22s; }
+  </style>
+</head>
+<body>
+
+<!-- ══ CALL MODAL ══ -->
+<div class="modal-overlay" id="callModal" onclick="closeModalOutside(event)">
+  <div class="modal-box">
+    <!-- phone SVG icon -->
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="28" cy="28" r="28" fill="#e8f8fd"/>
+      <path d="M18 16h-1.5C15 16 14 17 14 18.5s2 8.5 7 13.5 11 9 12.5 9 1.5-1 1.5-2.5v-1.5L32 34s-1.5-.75-3 .75c-1.5 1.5-3.75-.75-6-3s-4.5-4.5-3-6c1.5-1.5.75-3 .75-3L18 19.5V16z" fill="#197d9e"/>
+    </svg>
+    <div class="modal-title">Call to Order</div>
+    <div class="modal-sub">Phone orders welcome — we'll have it ready!</div>
+    <div class="modal-number">03 5996 2029</div>
+    <div class="modal-actions">
+      <a href="tel:0359962029" class="btn-call">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 3h-1C3 3 2 4 2 5.5S3.5 13 7 16.5 14 19 15.5 19s1.5-1 1.5-2.5v-1L14 13s-1.2-.6-2.5.7c-1.3 1.3-3.2-.6-5-2.4S4.3 7.7 5.6 6.4c1.3-1.3.7-2.5.7-2.5L5 3z" fill="white"/></svg>
+        Call 03 5996 2029
+      </a>
+      <button class="btn-dismiss" onclick="closeModal()">Maybe later</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NAV ══ -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <span class="nav-brand">
+      <img src="silver-mermaid-logo.png" alt="Silver Mermaid" style="height:44px; width:auto;" />
+    </span>
+    <ul class="nav-links" id="navLinks">
+      <li data-section="hours"><a href="#hours">Hours</a></li>
+      <li data-section="menu"><a href="#menu">Menu</a></li>
+      <li data-section="about"><a href="#about">About</a></li>
+      <li data-section="find"><a href="#find">Find Us</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-icon">
+    <img src="silver-mermaid-logo.png" alt="Silver Mermaid Fish & Chips" style="max-width:340px; width:80%; filter: drop-shadow(0 4px 16px rgba(0,100,140,0.18));" />
+  </div>
+  <div class="hero-badges fade-in delay-1">
+    <span class="badge">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1C5 1 3 4 3 6.5c0 4 5 8.5 5 8.5s5-4.5 5-8.5C13 4 11 1 8 1z" fill="#197d9e"/><circle cx="8" cy="6.5" r="2" fill="white"/></svg>
+      Local flake
+    </span>
+    <span class="badge">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- potato shape -->
+        <ellipse cx="8" cy="8.5" rx="5.5" ry="4" transform="rotate(-20 8 8.5)" fill="#197d9e"/>
+        <!-- potato eyes -->
+        <circle cx="6.5" cy="7.5" r="0.8" fill="white"/>
+        <circle cx="9.5" cy="9.2" r="0.8" fill="white"/>
+        <!-- sprout -->
+        <path d="M10.5 5.5 Q11.5 3.5 10.5 2.5" stroke="#197d9e" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M10.5 4 Q12 3.5 12.5 4.5" stroke="#197d9e" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+      Handmade potato cakes
+    </span>
+    <span class="badge">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5L2 4.5v3.5c0 3.5 2.5 6.5 6 7 3.5-.5 6-3.5 6-7V4.5L8 1.5z" fill="#197d9e"/><path d="M5.5 8l2 2 3-3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Gluten free chips
+    </span>
+    <span class="badge">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#197d9e" stroke-width="1.5"/><path d="M8 4.5v3.5l2 2" stroke="#197d9e" stroke-width="1.5" stroke-linecap="round"/></svg>
+      25+ years family owned
+    </span>
+  </div>
+  <div class="cta-row fade-in delay-2">
+    <a href="#menu" class="btn btn-primary">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 4h14M2 8h14M2 12h9" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      See the Menu
+    </a>
+    <button class="btn btn-secondary" onclick="openModal()">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 2.5h-1C2 2.5 1.5 3 1.5 4S3 9.5 6.5 13 12.5 16.5 14 16.5 15.5 16 15.5 14.5v-1l-2.5-2.5s-1.2-.6-2.5.7C9.2 13 7.3 11.1 5.5 9.3S3 5.8 4.3 4.5c1.3-1.3.7-2.5.7-2.5L4 2.5z" fill="#1a7fa0"/></svg>
+      Call to Order
+    </button>
+  </div>
+</section>
+
+<svg class="wave-divider" viewBox="0 0 1440 48" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0,24 C360,48 1080,0 1440,24 L1440,48 L0,48 Z" fill="#1a7fa0"/>
+</svg>
+
+<!-- ══ INFO STRIP ══ -->
+<div class="info-strip">
+  <div class="info-grid">
+    <div class="info-block">
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1C6 1 3.5 3.5 3.5 6.5 3.5 10.5 9 17 9 17s5.5-6.5 5.5-10.5C14.5 3.5 12 1 9 1z" fill="#4ec8e8"/><circle cx="9" cy="6.5" r="2.5" fill="white"/></svg>
+        Address
+      </h3>
+      <p>4 Lurline St<br>Cranbourne VIC 3977</p>
+    </div>
+    <div class="info-block">
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 2.5h-1C2 2.5 1.5 3 1.5 4S3 9.5 6.5 13 12.5 16.5 14 16.5 15.5 16 15.5 14.5v-1l-2.5-2.5s-1.2-.6-2.5.7C9.2 13 7.3 11.1 5.5 9.3S3 5.8 4.3 4.5c1.3-1.3.7-2.5.7-2.5L4 2.5z" fill="#4ec8e8"/></svg>
+        Phone Orders Encouraged
+      </h3>
+      <p><a href="tel:0359962029">03 5996 2029</a></p>
+    </div>
+    <div class="info-block">
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#4ec8e8" stroke-width="1.6"/><path d="M9 5v4l2.5 2.5" stroke="#4ec8e8" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Open Today
+      </h3>
+      <p id="today-hours">See hours below</p>
+    </div>
+    <div class="info-block">
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1l2.5 5 5.5.8-4 3.9.9 5.5L9 13.5l-4.9 2.7.9-5.5-4-3.9 5.5-.8L9 1z" fill="#4ec8e8"/></svg>
+        Over 25 Years
+      </h3>
+      <p>Proudly serving Cranbourne for over 25 years</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HOURS ══ -->
+<section class="hours-section" id="hours">
+  <div class="section-inner">
+    <h2 class="section-title">Trading Hours</h2>
+    <div class="hours-grid" id="hoursGrid">
+      <div class="hours-card" data-day="1"><span class="day">Monday</span><span class="time">4:30pm – 8:15pm</span></div>
+      <div class="hours-card closed" data-day="2"><span class="day">Tuesday</span><span class="time">Closed</span></div>
+      <div class="hours-card" data-day="3"><span class="day">Wednesday</span><span class="time">11:30am – 8:15pm</span></div>
+      <div class="hours-card" data-day="4"><span class="day">Thursday</span><span class="time">11:30am – 8:15pm</span></div>
+      <div class="hours-card" data-day="5"><span class="day">Friday</span><span class="time">11:30am – 8:30pm</span></div>
+      <div class="hours-card" data-day="6"><span class="day">Saturday</span><span class="time">11:30am – 8:15pm</span></div>
+      <div class="hours-card" data-day="0"><span class="day">Sunday</span><span class="time">12:00pm – 8:15pm</span></div>
+    </div>
+    <p class="hours-note">Regular trading hours throughout all public holidays unless specified otherwise.<br>Pricing correct as of January 2026 and subject to change without notice.</p>
+  </div>
+</section>
+
+<!-- ══ MENU ══ -->
+<section class="menu-section" id="menu">
+  <div class="section-inner">
+    <h2 class="section-title">Our Menu</h2>
+    <div class="menu-tabs">
+      <button class="tab-btn active" onclick="switchTab('packs',this)">Value Packs</button>
+      <button class="tab-btn" onclick="switchTab('fish',this)">Fish &amp; Seafood</button>
+      <button class="tab-btn" onclick="switchTab('chips',this)">Chips &amp; Snacks</button>
+      <button class="tab-btn" onclick="switchTab('burgers',this)">Burgers &amp; Steaks</button>
+      <button class="tab-btn" onclick="switchTab('souvlaki',this)">Souvlaki</button>
+      <button class="tab-btn" onclick="switchTab('sweets',this)">Sweets</button>
+    </div>
+
+    <!-- PACKS -->
+    <div class="menu-panel active" id="tab-packs">
+      <div class="packs-grid">
+        <div class="pack-card"><h4>Lunch Pack</h4><div class="pack-price">$15.90</div><p class="pack-desc">1 flake, 1 potato cake, 1 dim sim, chips &amp; a can of soft drink</p><p class="pack-note">Available anytime</p></div>
+        <div class="pack-card"><h4>Family Pack</h4><div class="pack-price">$55.50</div><p class="pack-desc">4 flakes, 4 potato cakes, 4 dim sims, 4 crab sticks &amp; chips</p></div>
+        <div class="pack-card"><h4>Dinner Pack</h4><div class="pack-price">$33.50</div><p class="pack-desc">2 flakes, 2 potato cakes, 2 dim sims, 2 crab sticks, 4 nuggets &amp; chips</p></div>
+        <div class="pack-card"><h4>Seafood Pack</h4><div class="pack-price">$37.00</div><p class="pack-desc">2 flakes, 2 prawns, 2 scallops, 2 calamari rings, 2 crab sticks &amp; chips</p></div>
+        <div class="pack-card"><h4>Mega Fish Bite Pack</h4><div class="pack-price">$48.00</div><p class="pack-desc">16 fish bites, 4 potato cakes, 4 dim sims &amp; chips</p></div>
+        <div class="pack-card"><h4>Fish Bite Pack</h4><div class="pack-price">$15.50</div><p class="pack-desc">6 fish bites &amp; chips</p></div>
+        <div class="pack-card"><h4>Burger Pack</h4><div class="pack-price">$15.50</div><p class="pack-desc">Hamburger w/ lot, chips &amp; a can of soft drink</p><p class="pack-note">Pineapple &amp; beetroot +$1</p></div>
+        <div class="pack-card"><h4>Souvlaki Pack</h4><div class="pack-price">$21.90</div><p class="pack-desc">Souvlaki, chips &amp; a can of soft drink</p><p class="pack-note">Mixed combination souvlaki +$1</p></div>
+        <div class="pack-card"><h4>Kids Pack</h4><div class="pack-price">$6.00</div><p class="pack-desc">1 fish bite, 1 dim sim, 2 nuggets &amp; chips</p></div>
+        <div class="pack-card"><h4>Nugget Pack</h4><div class="pack-price">$6.00</div><p class="pack-desc">5 nuggets &amp; chips</p></div>
+      </div>
+    </div>
+
+    <!-- FISH & SEAFOOD -->
+    <div class="menu-panel" id="tab-fish">
+      <div class="menu-category">
+        <h3>– Fish –</h3>
+        <div class="menu-items">
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Flake</div></div><div class="menu-item-price">$8.20</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Fish Bite</div></div><div class="menu-item-price">$1.80</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Large Whiting</div></div><div class="menu-item-price">$11.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Snapper</div></div><div class="menu-item-price">$11.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Barramundi</div></div><div class="menu-item-price">$11.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Blue Grenadier</div></div><div class="menu-item-price">$11.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Flathead Fillet</div></div><div class="menu-item-price">$8.20</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Couta <span style="font-size:.78rem;color:var(--muted)">(bones)</span></div></div><div class="menu-item-price">$7.90</div></div>
+        </div>
+        <p class="menu-note">How do you prefer your fish? Fried in batter (default) · Grilled +20¢ · Grilled in rice flour GF +20¢ · Fried crumbed +50¢ · Grilled crumbed +90¢ · Grilled in batter +90¢</p>
+      </div>
+      <div class="menu-category">
+        <h3>– Seafood –</h3>
+        <div class="menu-items">
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Crab Stick</div></div><div class="menu-item-price">$1.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Calamari Ring (crumbed)</div></div><div class="menu-item-price">$1.00</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Squid Ring in Batter</div></div><div class="menu-item-price">$1.30</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Scallop in Batter</div></div><div class="menu-item-price">$3.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Crumbed Prawn</div></div><div class="menu-item-price">$2.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">King Prawn in Batter</div></div><div class="menu-item-price">$3.20</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Large Mussel in Batter</div></div><div class="menu-item-price">$2.00</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Large Oyster in Batter</div></div><div class="menu-item-price">$2.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Fish Cake</div></div><div class="menu-item-price">$3.40</div></div>
+        </div>
+      </div>
+      <div class="menu-category">
+        <h3>– Chips –</h3>
+        <p class="menu-note" style="margin-bottom:12px">Our chips are gluten free! Choose from plain salt or chicken salt (GF). Half serving of minimum chips available with any fish purchase.</p>
+        <div class="menu-items">
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Minimum</div></div><div class="menu-item-price">$6.00</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Medium</div></div><div class="menu-item-price">$10.00</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Large</div></div><div class="menu-item-price">$15.00</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHIPS & SNACKS -->
+    <div class="menu-panel" id="tab-chips">
+      <div class="menu-category">
+        <h3>– Snacks –</h3>
+        <div class="menu-items">
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Potato Cake <span style="font-size:.78rem;color:var(--muted)">(homemade daily)</span></div></div><div class="menu-item-price">$1.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Sweet Potato Cake <span style="font-size:.78rem;color:var(--muted)">(homemade daily)</span></div></div><div class="menu-item-price">$1.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Dim Sim <span style="font-size:.78rem;color:var(--muted)">(steamed or fried)</span></div></div><div class="menu-item-price">$1.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">South Melbourne Dim Sim</div></div><div class="menu-item-price">$2.70</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Onion Rings</div></div><div class="menu-item-price">3 for $1.00</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Fresh Cut Onion Rings in Batter</div></div><div class="menu-item-price">S $5 / L $6.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Chicken Nugget</div></div><div class="menu-item-price">70¢</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Chiko Roll</div></div><div class="menu-item-price">$3.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Spring Roll</div></div><div class="menu-item-price">$3.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Veggie Spring Roll (Vegan)</div></div><div class="menu-item-price">$2.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Corn Jack</div></div><div class="menu-item-price">$3.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Sausage in Batter</div></div><div class="menu-item-price">$2.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Hamburger in Batter</div></div><div class="menu-item-price">$4.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Chicken Garlic Ball</div></div><div class="menu-item-price">$1.80</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Beef Croquette</div></div><div class="menu-item-price">$2.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Chicken Croquette</div></div><div class="menu-item-price">$2.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Chicken &amp; Cheese Croquette</div><div class="menu-item-desc">Larger size</div></div><div class="menu-item-price">$3.40</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Pumpkin Fritter</div><div class="menu-item-desc">Salt or cinnamon</div></div><div class="menu-item-price">$2.80</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Jar of Mussels</div></div><div class="menu-item-price">$8.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Pickled Onion</div></div><div class="menu-item-price">$1.80</div></div>
+        </div>
+        <p class="menu-note">Cold drinks and sauces available in store!</p>
+      </div>
+    </div>
+
+    <!-- BURGERS -->
+    <div class="menu-panel" id="tab-burgers">
+      <div class="menu-category">
+        <h3>– Burgers &amp; Steaks –</h3>
+        <div class="menu-items">
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Hamburger – Plain</div><div class="menu-item-desc">Beef, lettuce, a little onion &amp; tomato sauce</div></div><div class="menu-item-price">$6.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Hamburger – With the Lot</div><div class="menu-item-desc">All toppings (excl. pineapple &amp; beetroot +$1)</div></div><div class="menu-item-price">$9.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Steak Sandwich – Plain</div><div class="menu-item-desc">Scotch fillet, lettuce &amp; tomato sauce</div></div><div class="menu-item-price">$10.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Steak Sandwich – With the Lot</div><div class="menu-item-desc">All toppings (excl. pineapple &amp; beetroot +$1)</div></div><div class="menu-item-price">$14.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Fish Burger</div><div class="menu-item-desc">Fried or grilled flake, cheese, tomato, lettuce, onion &amp; mayo</div></div><div class="menu-item-price">$9.40</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Veggie Burger</div><div class="menu-item-desc">Veggie patty, cheese, tomato, lettuce, onion &amp; tomato sauce</div></div><div class="menu-item-price">$7.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Potato Cake Burger</div><div class="menu-item-desc">Potato cake, cheese, tomato, lettuce, onion &amp; tomato sauce</div></div><div class="menu-item-price">$6.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Chicken Schnitzel Sandwich</div><div class="menu-item-desc">Schnitzel, cheese, tomato, lettuce, onion &amp; mayo</div></div><div class="menu-item-price">$7.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Chicken Burger</div><div class="menu-item-desc">Chicken, cheese, tomato, lettuce, onion &amp; mayo</div></div><div class="menu-item-price">$7.90</div></div>
+        </div>
+        <p class="menu-note">Extra toppings: cheese, egg, tomato, extra onion, pineapple, beetroot +$1.00 · Bacon +$2.00</p>
+      </div>
+    </div>
+
+    <!-- SOUVLAKI -->
+    <div class="menu-panel" id="tab-souvlaki">
+      <div class="menu-category">
+        <h3>– Souvlaki –</h3>
+        <p class="menu-note" style="margin-bottom:14px">All served in pita with lettuce, onion, tomato &amp; garlic sauce</p>
+        <div class="menu-items">
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Lamb</div><div class="menu-item-desc">Fresh cut marinated lamb</div></div><div class="menu-item-price">$16.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Chicken</div><div class="menu-item-desc">Fresh cut marinated chicken</div></div><div class="menu-item-price">$16.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Beef</div><div class="menu-item-desc">Sliced scotch fillet</div></div><div class="menu-item-price">$16.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Fish</div><div class="menu-item-desc">Fried or grilled flake</div></div><div class="menu-item-price">$14.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Veggie</div><div class="menu-item-desc">Egg, cheese, lettuce, onion, tomato &amp; garlic sauce</div></div><div class="menu-item-price">$8.90</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Mixed Combination</div><div class="menu-item-desc">Chicken, lamb, lettuce, onion, tomato &amp; garlic sauce</div></div><div class="menu-item-price">$17.90</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SWEETS -->
+    <div class="menu-panel" id="tab-sweets">
+      <div class="menu-category">
+        <h3>– Sweets –</h3>
+        <div class="menu-items">
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Banana Fritter with Cinnamon</div></div><div class="menu-item-price">$2.80</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Pineapple Fritter with Cinnamon</div></div><div class="menu-item-price">$2.80</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Pumpkin Fritter</div><div class="menu-item-desc">Salt or cinnamon</div></div><div class="menu-item-price">$2.80</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Mars Bar in Batter</div></div><div class="menu-item-price">$3.50</div></div>
+          <div class="menu-item"><div class="menu-item-left"><div class="menu-item-name">Snickers in Batter</div></div><div class="menu-item-price">$3.50</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ABOUT ══ -->
+<section class="about-section" id="about">
+  <div class="section-inner">
+    <h2 class="section-title">About Us</h2>
+    <div class="about-inner">
+      <p>At Silver Mermaid, our flake is <strong>local and freshly cut</strong>. Our potato cakes are all <strong>handmade daily</strong>, our chips are <strong>gluten free</strong>, and we use <strong>cholesterol free oil</strong> to ensure you get the best fish and chips every single visit.</p>
+      <p>A family-owned Cranbourne institution for over <strong>25 years</strong> — we take pride in quality ingredients and honest cooking. No shortcuts, just great fish and chips made the right way.</p>
+      <div class="about-pills">
+        <span class="about-pill">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1C5 1 3 4 3 6.5c0 4 5 8.5 5 8.5s5-4.5 5-8.5C13 4 11 1 8 1z" fill="#197d9e"/><circle cx="8" cy="6.5" r="2" fill="white"/></svg>
+          Local Flake
+        </span>
+        <span class="about-pill">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="8" cy="8.5" rx="5.5" ry="4" transform="rotate(-20 8 8.5)" fill="#197d9e"/>
+            <circle cx="6.5" cy="7.5" r="0.8" fill="white"/>
+            <circle cx="9.5" cy="9.2" r="0.8" fill="white"/>
+            <path d="M10.5 5.5 Q11.5 3.5 10.5 2.5" stroke="#197d9e" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M10.5 4 Q12 3.5 12.5 4.5" stroke="#197d9e" stroke-width="1" stroke-linecap="round"/>
+          </svg>
+          Handmade Daily
+        </span>
+        <span class="about-pill">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5L2 4.5v3.5c0 3.5 2.5 6.5 6 7 3.5-.5 6-3.5 6-7V4.5L8 1.5z" fill="#197d9e"/><path d="M5.5 8l2 2 3-3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Gluten Free Chips
+        </span>
+        <span class="about-pill">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="3.5" stroke="#197d9e" stroke-width="1.4"/><path d="M8 9v5M6 12h4" stroke="#197d9e" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Cholesterol Free Oil
+        </span>
+        <span class="about-pill">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 2.5h-1C2 2.5 1.5 3 1.5 4S3 9.5 6.5 13 12.5 16.5 14 16.5 15.5 16 15.5 14.5v-1l-2.5-2.5s-1.2-.6-2.5.7C9.2 13 7.3 11.1 5.5 9.3S3 5.8 4.3 4.5c1.3-1.3.7-2.5.7-2.5L4 2.5z" fill="#197d9e"/></svg>
+          Phone Orders Welcome
+        </span>
+        <span class="about-pill">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1l2 4.5 4.5.7-3.3 3.2.8 4.6L8 11.5l-4 2.5.8-4.6L1.5 6.2l4.5-.7L8 1z" fill="#197d9e"/></svg>
+          Family Owned 25+ Years
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FIND US ══ -->
+<section class="find-section" id="find">
+  <div class="section-inner">
+    <h2 class="section-title">Find Us</h2>
+    <div class="map-wrap">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3139.223137596468!2d145.27508609999998!3d-38.11174289999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad60fb22d54d18d%3A0x2773b619d0ffe461!2sSilver%20Mermaid%20Fish%20%26%20Chips!5e0!3m2!1sen!2sau!4v1778751826159!5m2!1sen!2sau"
+        width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+    <p class="find-detail"><strong>4 Lurline St, Cranbourne VIC 3977</strong></p>
+    <div class="find-phone">03 5996 2029</div>
+    <p class="find-detail" style="margin-top:4px">Phone orders welcome — call ahead and we'll have it ready!</p>
+  </div>
+</section>
+
+<footer>
+  <p>© Silver Mermaid Fish &amp; Chips · 4 Lurline St, Cranbourne · 03 5996 2029</p>
+  <p style="margin-top:6px">Pricing correct as of January 2026 and subject to change without notice.</p>
+</footer>
+
+<script>
+  /* ── MODAL ── */
+  function openModal()  { document.getElementById('callModal').classList.add('open'); }
+  function closeModal() { document.getElementById('callModal').classList.remove('open'); }
+  function closeModalOutside(e) { if (e.target === document.getElementById('callModal')) closeModal(); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  /* ── MENU TABS ── */
+  function switchTab(name, btn) {
+    document.querySelectorAll('.menu-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  /* ── TODAY'S HOURS (Melbourne time) ── */
+  const hoursText = {
+    0: 'Sun: 12:00pm – 8:15pm',
+    1: 'Mon: 4:30pm – 8:15pm',
+    2: 'Tue: Closed today',
+    3: 'Wed: 11:30am – 8:15pm',
+    4: 'Thu: 11:30am – 8:15pm',
+    5: 'Fri: 11:30am – 8:30pm',
+    6: 'Sat: 11:30am – 8:15pm',
+  };
+  const melbDay = new Date(new Date().toLocaleString('en-AU', { timeZone: 'Australia/Melbourne' })).getDay();
+  document.getElementById('today-hours').textContent = hoursText[melbDay];
+
+  // Highlight today in the hours grid
+  document.querySelectorAll('#hoursGrid .hours-card').forEach(card => {
+    if (parseInt(card.dataset.day) === melbDay) card.classList.add('today');
+  });
+
+  /* ── SCROLL SPY ── */
+  const spySections = ['hours', 'menu', 'about', 'find'];
+  function updateNavSpy() {
+    const y = window.scrollY + 90;
+    let active = null;
+    spySections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.offsetTop <= y) active = id;
+    });
+    document.querySelectorAll('#navLinks li').forEach(li => {
+      li.classList.toggle('nav-active', li.dataset.section === active);
+    });
+  }
+  window.addEventListener('scroll', updateNavSpy, { passive: true });
+  updateNavSpy();
+</script>
+
+</body>
+</html>
